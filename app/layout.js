@@ -1,11 +1,13 @@
+import "./globals.css";
+
 export const metadata = {
-  title: "GPTforsham",
-  description: "AI Assistant built with Next.js"
+  title: "Chat App",
+  description: "Powered by your API",
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="ar" dir="rtl">
       <body className="bg-black text-white">{children}</body>
     </html>
   );
