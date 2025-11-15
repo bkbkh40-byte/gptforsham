@@ -1,0 +1,21 @@
+{
+  "name": "gptforsham",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "ai": "latest",
+    "next": "14.1.0",
+    "react": "18.3.0",
+    "react-dom": "18.3.0",
+    "lucide-react": "latest",
+    "clsx": "latest",
+    "tailwindcss": "latest",
+    "autoprefixer": "latest",
+    "postcss": "latest"
+  }
+}
