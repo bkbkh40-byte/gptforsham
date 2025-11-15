@@ -44,11 +44,13 @@ export default function Home() {
               className={`flex items-start gap-2 ${isAssistant ? "flex-row" : "flex-row-reverse"}`}
             >
               <div className="w-8 h-8 flex items-center justify-center">
-                {!isAssistant ? <User size={18} /> : <span style={{fontSize:18}}>🤖</span>}
+                {!isAssistant ? <User size={18} /> : <span style={{ fontSize: 18 }}>🤖</span>}
               </div>
 
               <div
-                className={`chat-bubble ${isAssistant ? "bg-gray-800 text-white" : "bg-blue-600 text-white"}`}
+                className={`chat-bubble ${
+                  isAssistant ? "bg-gray-800 text-white" : "bg-blue-600 text-white"
+                }`}
               >
                 {msg.content}
               </div>
