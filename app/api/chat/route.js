@@ -1,6 +1,8 @@
+import { NextResponse } from "next/server";
+
 export async function POST(req) {
   try {
-    const { messages, model } = await req.json();
+    const { messages } = await req.json();
 
     const apiKey = process.env.OPENAI_API_KEY;
 
@@ -8,25 +10,25 @@ export async function POST(req) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`
+        Authorization: `Bearer ${apiKey}`
       },
       body: JSON.stringify({
-        model,
-        messages,
-        stream: false
+        model: "gpt-4o-mini",
+        messages
       })
     });
 
     const data = await response.json();
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
+
+    return NextResponse.json({
+      reply: data.choices?.[0]?.message?.content || "لا يوجد رد"
     });
 
-  } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" }
-    });
+  } catch (err) {
+    console.log("Server Error:", err);
+    return NextResponse.json(
+      { reply: "حصل خطأ في السيرفر" },
+      { status: 500 }
+    );
   }
 }
