@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Send, Bot, User } from "lucide-react";
+import { Send, User } from "lucide-react";
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -11,39 +11,50 @@ export default function Home() {
     if (!input.trim()) return;
 
     const newMsg = { role: "user", content: input };
-    setMessages(prev => [...prev, newMsg]);
-
+    setMessages((prev) => [...prev, newMsg]);
     setInput("");
 
-    const res = await fetch("/api/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [...messages, newMsg] })
-    });
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [...messages, newMsg] })
+      });
 
-    const data = await res.json();
-
-    setMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
+      const data = await res.json();
+      const assistantMsg = { role: "assistant", content: data.reply || "لا يوجد رد" };
+      setMessages((prev) => [...prev, assistantMsg]);
+    } catch (err) {
+      console.error("API error:", err);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "حصل خطأ، حاول مرة أخرى لاحقًا." }
+      ]);
+    }
   }
 
   return (
     <main className="h-screen flex flex-col">
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg, i) => (
-          <div
-            key={i}
-            className={\`flex items-start gap-2 \${msg.role === "assistant" ? 
-              "flex-row" : "flex-row-reverse"}\`}
-          >
-            {msg.role === "assistant" ? <Bot /> : <User />}
+        {messages.map((msg, i) => {
+          const isAssistant = msg.role === "assistant";
+          return (
             <div
-              className={\`chat-bubble \${msg.role === "assistant" ?
-                "bg-gray-800" : "bg-blue-600"}\`}
+              key={i}
+              className={`flex items-start gap-2 ${isAssistant ? "flex-row" : "flex-row-reverse"}`}
             >
-              {msg.content}
+              <div className="w-8 h-8 flex items-center justify-center">
+                {!isAssistant ? <User size={18} /> : <span style={{fontSize:18}}>🤖</span>}
+              </div>
+
+              <div
+                className={`chat-bubble ${isAssistant ? "bg-gray-800 text-white" : "bg-blue-600 text-white"}`}
+              >
+                {msg.content}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="p-4 border-t border-gray-800 flex gap-2">
@@ -51,13 +62,10 @@ export default function Home() {
           className="flex-1 p-3 rounded-xl bg-gray-900 outline-none"
           placeholder="اكتب رسالتك هنا…"
           value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && sendMessage()}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
         />
-        <button
-          onClick={sendMessage}
-          className="p-3 bg-blue-600 rounded-xl"
-        >
+        <button onClick={sendMessage} className="p-3 bg-blue-600 rounded-xl">
           <Send size={20} />
         </button>
       </div>
